@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include <chrono>
-#include<cstring>
+#include <cstring>
 using namespace std;
 using namespace std::chrono;
 const int INF = 1e9+10;
@@ -65,7 +65,7 @@ vector<pair<int,int>> movements= {{-1,2},{1,2},
 {-2,1},{-2,-1}
 };
 
-int solvePath(string knightPosition, string targetPosition){
+pair<string,int> solvePath(string knightPosition, string targetPosition){
     int sourceX = getXcoordinate(knightPosition);
     int sourceY = getYcoordinate(knightPosition);
     int destX = getXcoordinate(targetPosition);
@@ -119,18 +119,16 @@ int solvePath(string knightPosition, string targetPosition){
         break;
       }
     }
-  return level[destX][destY];
+  return make_pair(addressBoard[destX][destY],level[destX][destY]);//Returns the path and steps
 }
 
 void reset(){
-
   for(int i=0;i<8;++i){
     for(int j=0;j<8;++j){
       level[i][j] = INF;
       visited[i][j] = 0;      
       }
   }
-  
 }
 
 
@@ -148,8 +146,8 @@ void printBoard(string targetPosition,int steps){
     newPath += path[i+1];    
   }
   
-  cout<<path<<endl;
-  cout<<newPath<<endl;
+  cout<<path<<endl;//In coordinate form
+  cout<<newPath<<endl;//In chess language 
   int step=0;
   for(int i = path.size()-1;i>=0;i-=2){
         //X-Coordinate, convert integer-String to integer
@@ -180,6 +178,7 @@ void setBoard(){
   }
 }
 
+/* Works for 2 Players only
 bool Gameover(string playerPath,string s1,string s2){
 int no;
 int cpuAnswer = solvePath(s1,s2);
@@ -200,7 +199,7 @@ if(userPath==cpuAnswer){
     cout<<"Naissss Correct Answer! "<<endl;
     cout<<"Your Score: "<<score<<endl;
     return true;
-}else{
+}else if(userPath==cpuAnswer){
     cout<<"Oopsie Wrong Answer"<<endl;
     
     cout<<"1. Retry  2. Watch Answer"<<endl;
@@ -212,81 +211,81 @@ if(userPath==cpuAnswer){
         printBoard(s2,cpuAnswer);
     }
 
-}
-  /*
-    if(player1_Path != player2_Path){
-    //Only 1 of them is correct no need to compare their time
-    if(cpuAnswer==player1_Path){
-      cout<<"Player 1 wins the game! "<<endl;
-      cout<<"Player 1 Score: "<<score_1<<endl;
-      cout<<"Player 2 Score: 0"<<endl;
-      
-    }else if(cpuAnswer==player2_Path){
-      cout<<"Player 2 wins the game! "<<endl;
-      cout<<"Player 2 Score: "<<score_2<<endl;
-      cout<<"Player 1 Score: 0"<<endl;
-      }
-    else{
-      cout<<"Wrong answer from both sides"<<endl;
-      cout<<"1. Retry  2. Watch Answer"<<endl;
-      cin>>no;
-      if(no == 1){
-        factor/=1.5;
-        goto retry;
-    }else{
-        printBoard(s2,cpuAnswer);
-    }
-    }
+}*/
+
+bool Gameover(string playerPath,string s1,string s2){
+
+string cpuAnswer = solvePath(s1,s2).first;  
+
+if(playerPath==cpuAnswer){
+    return true;
+}else if(playerPath==cpuAnswer){
+    return false;
   }
-  else{
-    if(cpuAnswer==player1_Path){
-      comparetime(player1,player2);
-      if(time.player1<time.player2){
-        cout<<"Player 1 wins the game by answering in less time"<<endl;
-        cout<<"Player 1 Score: "<<score_1<<endl;
-      }else{
-        cout<<"Player 2 wins the game by answering in less time"<<endl;
-        cout<<"Player 2 Score: "<<score_2<<endl;
-      }
-    }
-  }
-  */
 }
-void setupGame(int no,string s1,string s2){
+
+int setupGame(int no,string s1,string s2){
+  string choiceBoard[4][8][8];
+  for(){
+    
+  }
+  
   //Goes through each player's turn
   bool answerFound = false;
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
-  int move = 1;
-  string playerPath;
+  int xCoordinate;
+  int yCoordinate;
+  
+  int winner;
+  
+  int move = 1; //Represents which move it iss 
+  
+  string playerPath[] = {""};
+  string tempPath;
   while(!answerFound){
-    for(int i=1;i<=no;i++){
-      cout<<"Enter your move"<<move<<"Player"<<i<<endl;
-      cin>>playerPath;
-      answerFound = Gameover(playerPath,s1,s2);
+    for(int i=0;i<no;i++){
+      cout<<"Enter your move "<<move<<" Player "<<i<<endl;
+      cin>>tempPath;
+      xCoordinate = getXcoordinate(tempPath);
+      yCoordinate = getYcoordinate(tempPath);
+      
+      playerPath[i].append(tempPath); //Adds the path taken at a move in the playerPath array
+      
+      choiceBoard[i][xCoordinate][yCoordinate] = to_string(move);// update the board with the user move
+      
+      cout<<playerPath[i];
+      answerFound = Gameover(playerPath[i],s1,s2);
+      
         if(answerFound){
-          stopGame = true;//If answer was found Game has to be stopped
-        }
+          stopGame = true; //If answer was found Game has to be stopped
+          winner = i;
+          }
     }
+    
     if(stopGame){
-      return; //Stop the game
+      break;
     }else{
       move++; //Give another turn
     }
   }
+  return winner; //Stop the game
 }
 
 
 int main(){
-    //no -> number of testcases
+    //no -> number of players, max 4 allowed!
     int no;
     cout<<"Enter no of Players: "<<endl;
     cin>>no;
     string s1,s2;
     cin>>s1>>s2;
-    setBoard();
-    setupGame(no,s1,s2);
+    setBoard(); //Set the address on board cells
+  
+    int winner = setupGame(no,s1,s2); //Start the Game
+
+    cout<<"Player"<<winner<<"wins!!"<<endl;
     
-    int steps = solvePath(s1,s2);
+    int steps = solvePath(s1,s2).second;
     cout<<steps<<endl;  
     printBoard(s2,steps);
     
@@ -309,5 +308,8 @@ int main(){
 }
 
 
-//1. Add The print move (Alphabetical order) Below the board
-//2. Add Game Function
+//1. Correct the Alphabetical order of the cpu path and print it 
+//2. Concatinate userinput String in playerPath array
+//3. Print board at each choice
+//4. coordinate function is already cosidering [0] or [1] element of the argument at this point
+//5. Decide whether to put all players at 1 board or at their own board
