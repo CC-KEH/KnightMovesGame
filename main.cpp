@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <chrono>
+#include<cstring>
 using namespace std;
 using namespace std::chrono;
 const int INF = 1e9+10;
@@ -18,25 +19,34 @@ int getYcoordinate(string s){
     //Returns the Y coordinate by converting character to integer
     return s[1] - '1';
 }
-string getXcoordinateFinal(string path){
-  string newPath;
-  switch(stoi(path)){
+string getXcoordinateFinal(char path){
+  string newPath="";
+  
+  switch(path){
     case 0:
       newPath = "a"; 
+      break;
     case 1:
       newPath = "b"; 
+      break;
     case 2:
       newPath = "c"; 
+      break;
     case 3:
       newPath = "d"; 
+      break;
     case 4:
       newPath = "e"; 
+      break;
     case 5:
       newPath = "f"; 
+      break;
     case 6:
       newPath = "g"; 
+      break;
     case 7:
       newPath = "h";
+      break;
     default:
       cout<<"Error in Coordinates X final Conversion"<<endl;
     }
@@ -130,9 +140,16 @@ void printBoard(string targetPosition,int steps){
   int destY = getYcoordinate(targetPosition);
   
   string path = addressBoard[destX][destY];
-
+  
+  //reverse(str.begin(), str.end());
+  string newPath="";
+  for(int i =0;i<8;i+=2){
+    newPath += getXcoordinateFinal(path[i]);
+    newPath += path[i+1];    
+  }
+  
   cout<<path<<endl;
-
+  cout<<newPath<<endl;
   int step=0;
   for(int i = path.size()-1;i>=0;i-=2){
         //X-Coordinate, convert integer-String to integer
@@ -163,7 +180,7 @@ void setBoard(){
   }
 }
 
-void Game(string s1,string s2){
+bool Gameover(string playerPath,string s1,string s2){
 int no;
 int cpuAnswer = solvePath(s1,s2);
 int userPath;
@@ -182,6 +199,7 @@ int score = factor/duration.count()*100000;
 if(userPath==cpuAnswer){
     cout<<"Naissss Correct Answer! "<<endl;
     cout<<"Your Score: "<<score<<endl;
+    return true;
 }else{
     cout<<"Oopsie Wrong Answer"<<endl;
     
@@ -193,6 +211,7 @@ if(userPath==cpuAnswer){
     }else{
         printBoard(s2,cpuAnswer);
     }
+
 }
   /*
     if(player1_Path != player2_Path){
@@ -233,32 +252,62 @@ if(userPath==cpuAnswer){
   }
   */
 }
+void setupGame(int no,string s1,string s2){
+  //Goes through each player's turn
+  bool answerFound = false;
+  bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
+  int move = 1;
+  string playerPath;
+  while(!answerFound){
+    for(int i=1;i<=no;i++){
+      cout<<"Enter your move"<<move<<"Player"<<i<<endl;
+      cin>>playerPath;
+      answerFound = Gameover(playerPath,s1,s2);
+        if(answerFound){
+          stopGame = true;//If answer was found Game has to be stopped
+        }
+    }
+    if(stopGame){
+      return; //Stop the game
+    }else{
+      move++; //Give another turn
+    }
+  }
+}
 
 
 int main(){
     //no -> number of testcases
     int no;
+    cout<<"Enter no of Players: "<<endl;
     cin>>no;
-    for (int i = 0; i < no; i++)
-    {
+    string s1,s2;
+    cin>>s1>>s2;
+    setBoard();
+    setupGame(no,s1,s2);
+    
+    int steps = solvePath(s1,s2);
+    cout<<steps<<endl;  
+    printBoard(s2,steps);
+    
+    //for (int i = 0; i < no; i++)
+    //{
         //reseting the visited and level board
-        reset();
+        //reset();
         //Filling the addressBoard, assigning each cell its address, in string format
-        setBoard();
+        //setBoard();
         //s1 -> Source
         //s2 -> Destination
-        string s1,s2;
-        cin>>s1>>s2;
+        //string s1,s2;
+        //cin>>s1>>s2;
         //Game(s1,s2);
-        int steps = solvePath(s1,s2);
-        cout<<steps<<endl;  
+        //int steps = solvePath(s1,s2);
+        //cout<<steps<<endl;  
       
-        printBoard(s2,steps);
-    }
+       // printBoard(s2,steps);
+    //}
 }
 
-//1. Check X and Y value after conversion
-//2. Check Steps Value by printing each
-//3. Check Board by printing it completely
-//4. Add The print move (Alphabetical order) Below the board
-//5. Add Game Function
+
+//1. Add The print move (Alphabetical order) Below the board
+//2. Add Game Function
