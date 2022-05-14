@@ -11,13 +11,13 @@ int level[8][8];            //This Matrix stores the minimum paths from src to i
 string addressBoard[8][8] = {""};  //This Matrix stores the path from src to the ith row-jth col in String format
 string board[8][8] = {" "}; //Initialise all blocks as empty
 
-int getXcoordinate(string s){
+int getXcoordinate(string s,int i){
     //Returns the X coordinate by converting character to integer
-    return s[0] - 'a';
+    return s[i] - 'a';
 }
-int getYcoordinate(string s){
+int getYcoordinate(string s,int j){
     //Returns the Y coordinate by converting character to integer
-    return s[1] - '1';
+    return s[j] - '1';
 }
 string getXcoordinateFinal(char path){
   string newPath="";
@@ -66,10 +66,10 @@ vector<pair<int,int>> movements= {{-1,2},{1,2},
 };
 
 pair<string,int> solvePath(string knightPosition, string targetPosition){
-    int sourceX = getXcoordinate(knightPosition);
-    int sourceY = getYcoordinate(knightPosition);
-    int destX = getXcoordinate(targetPosition);
-    int destY = getYcoordinate(targetPosition);
+    int sourceX = getXcoordinate(knightPosition,0);
+    int sourceY = getYcoordinate(knightPosition,1);
+    int destX = getXcoordinate(targetPosition,0);
+    int destY = getYcoordinate(targetPosition,1);
     
     
     queue<pair<int,int>> q;
@@ -134,20 +134,12 @@ void reset(){
 
 
 void printBoard(string targetPosition,int steps){
-  int destX = getXcoordinate(targetPosition);
-  int destY = getYcoordinate(targetPosition);
+  int destX = getXcoordinate(targetPosition,0);
+  int destY = getYcoordinate(targetPosition,1);
   
   string path = addressBoard[destX][destY];
   
-  //reverse(str.begin(), str.end());
-  string newPath="";
-  for(int i =0;i<8;i+=2){
-    newPath += getXcoordinateFinal(path[i]);
-    newPath += path[i+1];    
-  }
   
-  cout<<path<<endl;//In coordinate form
-  cout<<newPath<<endl;//In chess language 
   int step=0;
   for(int i = path.size()-1;i>=0;i-=2){
         //X-Coordinate, convert integer-String to integer
@@ -212,6 +204,21 @@ if(userPath==cpuAnswer){
     }
 
 }*/
+bool isPossible(int xCoordinate,int yCoordinate,string path){
+  int last = getYcoordinate(path,path.length()-1); //Gives the last move y axis information
+  int secondLast = getXcoordinate(path,path.length()-2); //Gives the last move x axis information
+  if(xCoordinate>0 && xCoordinate<8){//Checks validity of X coordinate
+    if(secondLast+2==xCoordinate || secondLast-1==xCoordinate || secondLast+1==xCoordinate || secondLast-2==xCoordinate){
+      if(yCoordinate>0 && yCoordinate<8){//Checks validity of Y coordinate
+        if(last+2==yCoordinate || last-1==yCoordinate || last+1==yCoordinate || last-2==yCoordinate){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+  }
+  
 
 bool Gameover(string playerPath,string s1,string s2){
 
@@ -226,9 +233,7 @@ if(playerPath==cpuAnswer){
 
 int setupGame(int no,string s1,string s2){
   string choiceBoard[4][8][8];
-  for(){
-    
-  }
+  
   
   //Goes through each player's turn
   bool answerFound = false;
@@ -241,25 +246,48 @@ int setupGame(int no,string s1,string s2){
   int move = 1; //Represents which move it iss 
   
   string playerPath[] = {""};
-  string tempPath;
+
+  for(int i=0;i<no;i++){
+    playerPath[i] = (s1);//Stores the starting position of each player, in chess language
+  }
+  string tempPath;//takes temporary input 
   while(!answerFound){
     for(int i=0;i<no;i++){
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
+      retry://If the move given by player is wrong they will retry to give their move
       cin>>tempPath;
-      xCoordinate = getXcoordinate(tempPath);
-      yCoordinate = getYcoordinate(tempPath);
-      
-      playerPath[i].append(tempPath); //Adds the path taken at a move in the playerPath array
-      
-      choiceBoard[i][xCoordinate][yCoordinate] = to_string(move);// update the board with the user move
-      
+      xCoordinate = getXcoordinate(tempPath,0);
+      yCoordinate = getYcoordinate(tempPath,1);
+      if(isPossible(xCoordinate,yCoordinate,playerPath[i])){
+
+        string tp = playerPath[i];
+        tp.append(tempPath); //Adds the path given by user in the playerPath array
+        playerPath[i] = tp; 
+        cout<<playerPath[i];
+        choiceBoard[i][xCoordinate][yCoordinate] = to_string(move);// update the board with the user move
+      }
+      else{
+        cout<<"Incorrect move Playe"<<i<<endl;
+        goto retry;
+      }
       cout<<playerPath[i];
-      answerFound = Gameover(playerPath[i],s1,s2);
+      answerFound = Gameover(playerPath[i],s1,s2);//Checks if answer is found using Gameover function
       
         if(answerFound){
           stopGame = true; //If answer was found Game has to be stopped
           winner = i;
           }
+    }
+    for(int boardNo = 0;boardNo<no;boardNo++){//
+      for(int row = 7;row>=0;row--){
+        cout<<row+1;
+        for(int cell=0;cell<8;cell++){
+          cout<<"  "<<board[boardNo][row][cell]<<" ";
+        }
+        cout<<endl;
+        cout<<endl;
+      }
+      cout<<"   A  B  C  D  E  F  G  H "<<endl;
     }
     
     if(stopGame){
@@ -275,12 +303,13 @@ int setupGame(int no,string s1,string s2){
 int main(){
     //no -> number of players, max 4 allowed!
     int no;
+    reset();
+    setBoard(); //Set the address on board cells
     cout<<"Enter no of Players: "<<endl;
     cin>>no;
     string s1,s2;
     cin>>s1>>s2;
-    setBoard(); //Set the address on board cells
-  
+
     int winner = setupGame(no,s1,s2); //Start the Game
 
     cout<<"Player"<<winner<<"wins!!"<<endl;
@@ -288,7 +317,7 @@ int main(){
     int steps = solvePath(s1,s2).second;
     cout<<steps<<endl;  
     printBoard(s2,steps);
-    
+
     //for (int i = 0; i < no; i++)
     //{
         //reseting the visited and level board
@@ -310,6 +339,15 @@ int main(){
 
 //1. Correct the Alphabetical order of the cpu path and print it 
 //2. Concatinate userinput String in playerPath array
-//3. Print board at each choice
-//4. coordinate function is already cosidering [0] or [1] element of the argument at this point
-//5. Decide whether to put all players at 1 board or at their own board
+
+
+
+//isValid                          Done
+//setBoard                         Done
+//reset                            Done
+//Solve Path                       Done
+//getXcoordinate,ycoordinate       Done
+//PrintBoard                       Done
+//isPossile                        Done
+//SetupGame
+//GameOver
