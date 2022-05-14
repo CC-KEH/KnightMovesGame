@@ -259,9 +259,16 @@ bool isPossible(int xCoordinate,int yCoordinate,string path){
 
 bool Gameover(string playerPath,string s1,string s2){
 
-string cpuAnswer = solvePath(s1,s2).first;  
-cout<<"\n"<<cpuAnswer<<endl;
-if(playerPath==cpuAnswer){
+string path = solvePath(s1,s2).first;
+string newPath = "";
+
+for(int i = 0;i<path.length();i+=2){
+    newPath += getcoordinatesFinal(path[i],true);
+    newPath += getcoordinatesFinal(path[i+1],false);    
+  }
+  
+cout<<"\n"<<newPath<<endl;
+if(playerPath==newPath){
     return true;
 }else{
     return false;
@@ -371,18 +378,4 @@ int main(){
 }
 
 
-//1. Correct the Alphabetical order of the cpu path and print it 
-//2. Concatinate userinput String in playerPath array
-//3. Solve issue in board printing
-
-
-//isValid                          Done
-//setBoard                         Done
-//reset                            Done
-//Solve Path                       Done
-//getXcoordinate,ycoordinate       Done
-//PrintBoard                       Done
-//isPossile                        Done
-//SetupGame
-//GameOver                         
-//GetXcoordinateFinal              
+//1. Solve issue in board printing
