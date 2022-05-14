@@ -19,37 +19,67 @@ int getYcoordinate(string s,int j){
     //Returns the Y coordinate by converting character to integer
     return s[j] - '1';
 }
-string getXcoordinateFinal(char path){
+string getcoordinatesFinal(char path,bool getX){
   string newPath="";
-  
+  if(getX){
   switch(path){
-    case 0:
+    case '0':
       newPath = "a"; 
       break;
-    case 1:
+    case '1':
       newPath = "b"; 
       break;
-    case 2:
+    case '2':
       newPath = "c"; 
       break;
-    case 3:
+    case '3':
       newPath = "d"; 
       break;
-    case 4:
+    case '4':
       newPath = "e"; 
       break;
-    case 5:
+    case '5':
       newPath = "f"; 
       break;
-    case 6:
+    case '6':
       newPath = "g"; 
       break;
-    case 7:
+    case '7':
       newPath = "h";
       break;
     default:
       cout<<"Error in Coordinates X final Conversion"<<endl;
     }
+  }else{
+    switch(path){
+    case '0':
+      newPath = "1"; 
+      break;
+    case '1':
+      newPath = "2"; 
+      break;
+    case '2':
+      newPath = "3"; 
+      break;
+    case '3':
+      newPath = "4"; 
+      break;
+    case '4':
+      newPath = "5"; 
+      break;
+    case '5':
+      newPath = "6"; 
+      break;
+    case '6':
+      newPath = "7"; 
+      break;
+    case '7':
+      newPath = "8";
+      break;
+    default:
+      cout<<"Error in Coordinates Y final Conversion"<<endl;
+    }
+  }
   return newPath;
 }
 
@@ -66,10 +96,10 @@ vector<pair<int,int>> movements= {{-1,2},{1,2},
 };
 
 pair<string,int> solvePath(string knightPosition, string targetPosition){
-    int sourceX = getXcoordinate(knightPosition,0);
-    int sourceY = getYcoordinate(knightPosition,1);
-    int destX = getXcoordinate(targetPosition,0);
-    int destY = getYcoordinate(targetPosition,1);
+    int sourceX = getXcoordinate(targetPosition,0);
+    int sourceY = getYcoordinate(targetPosition,1);
+    int destX = getXcoordinate(knightPosition,0);
+    int destY = getYcoordinate(knightPosition,1);
     
     
     queue<pair<int,int>> q;
@@ -138,15 +168,22 @@ void printBoard(string targetPosition,int steps){
   int destY = getYcoordinate(targetPosition,1);
   
   string path = addressBoard[destX][destY];
+  cout<<path<<endl;
   
+  string newPath="";
+  for(int i = 0;i<path.length();i+=2){
+    newPath += getcoordinatesFinal(path[i],true);
+    newPath += getcoordinatesFinal(path[i+1],false);    
+  }
+  cout<<newPath<<endl;
   
-  int step=0;
+  int step=steps;
   for(int i = path.size()-1;i>=0;i-=2){
         //X-Coordinate, convert integer-String to integer
         int y = path[i-1] - '0';
         int x = path[i] - '0';    
         board[x][y] = to_string(step);
-        step++;
+        step--;
   }
   
   for(int row=7; row>=0; row--){
@@ -223,10 +260,10 @@ bool isPossible(int xCoordinate,int yCoordinate,string path){
 bool Gameover(string playerPath,string s1,string s2){
 
 string cpuAnswer = solvePath(s1,s2).first;  
-
+cout<<"\n"<<cpuAnswer<<endl;
 if(playerPath==cpuAnswer){
     return true;
-}else if(playerPath==cpuAnswer){
+}else{
     return false;
   }
 }
@@ -259,18 +296,15 @@ int setupGame(int no,string s1,string s2){
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
       if(isPossible(xCoordinate,yCoordinate,playerPath[i])){
+        playerPath[i].append(tempPath); //Adds the path given by user in the playerPath array
 
-        string tp = playerPath[i];
-        tp.append(tempPath); //Adds the path given by user in the playerPath array
-        playerPath[i] = tp; 
-        cout<<playerPath[i];
         choiceBoard[i][xCoordinate][yCoordinate] = to_string(move);// update the board with the user move
-      }
+        }
       else{
         cout<<"Incorrect move Playe"<<i<<endl;
         goto retry;
       }
-      cout<<playerPath[i];
+
       answerFound = Gameover(playerPath[i],s1,s2);//Checks if answer is found using Gameover function
       
         if(answerFound){
@@ -310,13 +344,13 @@ int main(){
     string s1,s2;
     cin>>s1>>s2;
 
-    int winner = setupGame(no,s1,s2); //Start the Game
-
-    cout<<"Player"<<winner<<"wins!!"<<endl;
+    //int winner = setupGame(no,s1,s2); //Start the Game
     
+    //cout<<"Player"<<winner<<"wins!!"<<endl;
+  
     int steps = solvePath(s1,s2).second;
     cout<<steps<<endl;  
-    printBoard(s2,steps);
+    printBoard(s1,steps);
 
     //for (int i = 0; i < no; i++)
     //{
@@ -339,7 +373,7 @@ int main(){
 
 //1. Correct the Alphabetical order of the cpu path and print it 
 //2. Concatinate userinput String in playerPath array
-
+//3. Solve issue in board printing
 
 
 //isValid                          Done
@@ -350,4 +384,5 @@ int main(){
 //PrintBoard                       Done
 //isPossile                        Done
 //SetupGame
-//GameOver
+//GameOver                         
+//GetXcoordinateFinal              
