@@ -242,16 +242,13 @@ if(userPath==cpuAnswer){
 
 }*/
 bool isPossible(int xCoordinate,int yCoordinate,string path){
-  int last = getYcoordinate(path,path.length()-1); //Gives the last move y axis information
-  int secondLast = getXcoordinate(path,path.length()-2); //Gives the last move x axis information
-  if(xCoordinate>0 && xCoordinate<8){//Checks validity of X coordinate
-    if(secondLast+2==xCoordinate || secondLast-1==xCoordinate || secondLast+1==xCoordinate || secondLast-2==xCoordinate){
-      if(yCoordinate>0 && yCoordinate<8){//Checks validity of Y coordinate
-        if(last+2==yCoordinate || last-1==yCoordinate || last+1==yCoordinate || last-2==yCoordinate){
+  int prevYmove = getYcoordinate(path,path.length()-1); //Gives the last move y axis information
+  int prevXmove = getXcoordinate(path,path.length()-2); //Gives the last move x axis information
+  
+  if(xCoordinate>0 && xCoordinate<8 && yCoordinate>0 && yCoordinate<8){//Checks validity of X & Y coordinate
+  if((prevXmove+2==xCoordinate) && (prevYmove+1==yCoordinate||prevYmove-1==yCoordinate) || ((prevXmove-1==xCoordinate) && (prevYmove+2==yCoordinate || prevYmove-2==yCoordinate)) || ((prevXmove+1==xCoordinate) && (prevYmove+2==yCoordinate ||prevYmove-2==yCoordinate)) ||((prevXmove-2==xCoordinate) && (prevYmove-1==yCoordinate || prevYmove+1==yCoordinate))){
           return true;
-        }
-      }
-    }
+   }
   }
   return false;
   }
@@ -302,13 +299,27 @@ int setupGame(int no,string s1,string s2){
       cin>>tempPath;
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
+
+      
       if(isPossible(xCoordinate,yCoordinate,playerPath[i])){
         playerPath[i].append(tempPath); //Adds the path given by user in the playerPath array
 
-        choiceBoard[i][xCoordinate][yCoordinate] = to_string(move);// update the board with the user move
+        //here yCoordinate represents Row & xCoordinate represents column
+        choiceBoard[i][yCoordinate][xCoordinate] = to_string(move);// update the board with the user move
+
+        for(int row = 7;row>=0;row--){
+          cout<<row+1;
+          for(int cell=0;cell<8;cell++){
+          cout<<"  "<<choiceBoard[i][row][cell]<<" ";
+        }
+        cout<<endl;
+        cout<<endl;
+      }
+        
+      cout<<"   A  B  C  D  E  F  G  H "<<endl;    
         }
       else{
-        cout<<"Incorrect move Playe"<<i<<endl;
+        cout<<"ILLEGAL MOVE PLAYER "<<i<<endl;
         goto retry;
       }
 
@@ -319,17 +330,7 @@ int setupGame(int no,string s1,string s2){
           winner = i;
           }
     }
-    for(int boardNo = 0;boardNo<no;boardNo++){//
-      for(int row = 7;row>=0;row--){
-        cout<<row+1;
-        for(int cell=0;cell<8;cell++){
-          cout<<"  "<<board[boardNo][row][cell]<<" ";
-        }
-        cout<<endl;
-        cout<<endl;
-      }
-      cout<<"   A  B  C  D  E  F  G  H "<<endl;
-    }
+    //print here
     
     if(stopGame){
       break;
@@ -339,43 +340,54 @@ int setupGame(int no,string s1,string s2){
   }
   return winner; //Stop the game
 }
-
+string printRandomString(int n){
+    char alphabet[3] = { 'f', 'g','h'};
+ 
+    string res = "";
+    for (int i = 0; i < n; i++){
+        res = res + alphabet[rand() % 3];
+      }
+    string num = to_string(1 + (rand() % ( 8 - 1 + 1 )));
+    return res+num;
+}
 
 int main(){
     //no -> number of players, max 4 allowed!
+    
     int no;
     reset();
     setBoard(); //Set the address on board cells
     cout<<"Enter no of Players: "<<endl;
     cin>>no;
     string s1,s2;
-    cin>>s1>>s2;
-
-    //int winner = setupGame(no,s1,s2); //Start the Game
+    srand(time(NULL)); //makes use of the computer's internal clock to control the choice of the seed. Since time is continually changing, the seed is forever changing. Remember, if the seed number remains the same, the sequence of numbers will be repeated for each run of the program.
+    s2 = printRandomString(1);
+    s1 = "a1";
+    cout<<"You Start from: "<<s1<<endl;
+    cout<<"Reach "<<s2<<" in minimum moves & be quick!"<<endl;
+    int winner = setupGame(no,s1,s2); //Start the Game
     
-    //cout<<"Player"<<winner<<"wins!!"<<endl;
-  
     int steps = solvePath(s1,s2).second;
-    cout<<steps<<endl;  
-    printBoard(s1,steps);
+  
+    cout<<"PLAYER "<<winner<<" WINS THE GAME WITH "<<steps<<" STEPS"<<endl;
 
-    //for (int i = 0; i < no; i++)
-    //{
-        //reseting the visited and level board
-        //reset();
-        //Filling the addressBoard, assigning each cell its address, in string format
-        //setBoard();
-        //s1 -> Source
-        //s2 -> Destination
-        //string s1,s2;
-        //cin>>s1>>s2;
-        //Game(s1,s2);
-        //int steps = solvePath(s1,s2);
-        //cout<<steps<<endl;  
-      
-       // printBoard(s2,steps);
-    //}
+    printBoard(s1,steps);
+    
 }
 
 
-//1. Solve issue in board printing
+
+
+
+/*
+1. Fix Print Function Bug
+2. Score: 
+  auto start = Clock::now();
+  std::cin >> name;
+
+  auto end = Clock::now();
+  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+
+3. Check if we can add feature, like each player will have source of their choice but they dont know destination
+*/
