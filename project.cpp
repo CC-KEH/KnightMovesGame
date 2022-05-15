@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include <chrono>
 #include <cstring>
+
 using namespace std;
 using namespace std::chrono;
 const int INF = 1e9+10;
@@ -207,40 +208,6 @@ void setBoard(){
   }
 }
 
-/* Works for 2 Players only
-bool Gameover(string playerPath,string s1,string s2){
-int no;
-int cpuAnswer = solvePath(s1,s2);
-int userPath;
-int factor = 2;
-retry:
-cout<<"Enter your Path: "<<endl;
-  
-//Calculating the time before giving input
-auto start = high_resolution_clock::now();
-cin>>userPath;
-//Calculating the time after input is given
-auto stop = high_resolution_clock::now();  
-auto duration = duration_cast<microseconds>(stop - start);  
-int score = factor/duration.count()*100000;
-
-if(userPath==cpuAnswer){
-    cout<<"Naissss Correct Answer! "<<endl;
-    cout<<"Your Score: "<<score<<endl;
-    return true;
-}else if(userPath==cpuAnswer){
-    cout<<"Oopsie Wrong Answer"<<endl;
-    
-    cout<<"1. Retry  2. Watch Answer"<<endl;
-    cin>>no;
-    if(no == 1){
-        factor/=1.5;
-        goto retry;
-    }else{
-        printBoard(s2,cpuAnswer);
-    }
-
-}*/
 bool isPossible(int xCoordinate,int yCoordinate,string path){
   int prevYmove = getYcoordinate(path,path.length()-1); //Gives the last move y axis information
   int prevXmove = getXcoordinate(path,path.length()-2); //Gives the last move x axis information
@@ -267,14 +234,19 @@ for(int i = 0;i<path.length();i+=2){
 cout<<"\n"<<newPath<<endl;
 if(playerPath==newPath){
     return true;
-}else{
+}
+else if(playerPath[playerPath.length()-1] == s2[1] && playerPath[playerPath.length()-2] == s2[0]){
+
+    return true;
+} 
+else{
     return false;
   }
 }
 
 int setupGame(int no,string s1,string s2){
   string choiceBoard[4][8][8];
-  
+  //int scoreArr[4] = {0};
   
   //Goes through each player's turn
   bool answerFound = false;
@@ -296,7 +268,22 @@ int setupGame(int no,string s1,string s2){
     for(int i=0;i<no;i++){
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
       retry://If the move given by player is wrong they will retry to give their move
+      
+      //auto start = high_resolution_clock::now();
+      
       cin>>tempPath;
+      
+      //auto stop = high_resolution_clock::now();  
+
+      //auto duration = duration_cast<microseconds>(stop - start);
+
+      //float time = duration.count(); 
+
+      //scoreArr[i] += time;
+      
+     // cout<<"\n"<<scoreArr[i]<<endl;
+      //Storing player Score in the array
+      
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
 
@@ -388,6 +375,19 @@ int main(){
   auto end = Clock::now();
   auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
+  int score = factor/duration.count()*100000;
 
-3. Check if we can add feature, like each player will have source of their choice but they dont know destination
+  int factor = 2;
+
+  auto duration = duration_cast<microseconds>(stop - start);  
+  int score = factor/duration.count()*100000;
+  CALCULATE THE SCORE IN THE END
+  
+
+3. Make person win even if more moves but with less points if noone reaches target but him
+
+
+
 */
+
+//value of time is too much
