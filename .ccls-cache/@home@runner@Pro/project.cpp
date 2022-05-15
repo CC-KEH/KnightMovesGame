@@ -281,7 +281,7 @@ int setupGame(int no,string s1,string s2){
 
       //scoreArr[i] += time;
       
-     // cout<<"\n"<<scoreArr[i]<<endl;
+      // cout<<"\n"<<scoreArr[i]<<endl;
       //Storing player Score in the array
       
       xCoordinate = getXcoordinate(tempPath,0);
@@ -368,6 +368,7 @@ int main(){
 
 /*
 1. Fix Print Function Bug
+
 2. Score: 
   auto start = Clock::now();
   std::cin >> name;
@@ -380,14 +381,29 @@ int main(){
   int factor = 2;
 
   auto duration = duration_cast<microseconds>(stop - start);  
-  int score = factor/duration.count()*100000;
-  CALCULATE THE SCORE IN THE END
+
   
+  CALCULATE THE SCORE IN THE END using array
 
-3. Make person win even if more moves but with less points if noone reaches target but him
+  if other players dont reach the target arrScore[i] = 0;
 
+  //Update array to score
+  for(int i=0;i<4;i++){
+  int temp = scoreArr[i];
+  int score = factor* (int) log10 ((double) temp) + 1/temp;
+  scoreArr[i] = score;
+  }
 
+  
+  //Print Score
+  cout<<"Player Name     ||    Score"<<endl;
+  for(int i=0;i<4;i++){
+    cout<<"PLAYER "<<i<<"\t ||   "scoreArr[i]<<endl;
+  }
+
+3. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
 
 */
+
 
 //value of time is too much
