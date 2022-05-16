@@ -169,7 +169,6 @@ void printBoard(string targetPosition,int steps){
   int destY = getYcoordinate(targetPosition,1);
   
   string path = addressBoard[destX][destY];
-  cout<<path<<endl;
   
   string newPath="";
   for(int i = 0;i<path.length();i+=2){
@@ -275,13 +274,15 @@ int setupGame(int no,string s1,string s2){
       
       auto stop = high_resolution_clock::now();  
 
-      auto duration = duration_cast<microseconds>(stop - start);
+      auto duration = duration_cast<seconds>(stop - start);
 
       int time = (int)duration.count(); 
       string scoreString = to_string(time);
       int score = factor*pow(10,(scoreString.length()+1))/time;
           
-      scoreArr[i] += time;
+      //scoreArr[i] += time;
+
+      scoreArr[i] += score;
       
       cout<<"\n"<<scoreArr[i]<<endl;
 
@@ -361,8 +362,6 @@ int main(){
     
     int steps = solvePath(s1,s2).second;
   
-    cout<<"PLAYER "<<winner<<" WINS THE GAME WITH "<<steps<<" STEPS"<<endl;
-
     printBoard(s1,steps);
     
 }
@@ -372,36 +371,13 @@ int main(){
 
 
 /*
-1. Fix Print Function Bug
-
-2. Score: 
-  auto start = Clock::now();
-  std::cin >> name;
-
-  auto end = Clock::now();
-  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  
-  CALCULATE THE SCORE IN THE END using array
-
-  if other players dont reach the target arrScore[i] = 0;
-
-  //Update array to score
-  for(int i=0;i<4;i++){
-  int temp = scoreArr[i];
-  int score = factor* (int) log10 ((double) temp) + 1/temp;
-  scoreArr[i] = score;
-  }
-
-  
-  //Print Score
+1. Print Score
   cout<<"Player Name     ||    Score"<<endl;
   for(int i=0;i<4;i++){
     cout<<"PLAYER "<<i<<"\t ||   "scoreArr[i]<<endl;
   }
 
-3. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
+2. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
 
+3. Some issue with isPossible function
 */
-
-
-//value of time is too much
