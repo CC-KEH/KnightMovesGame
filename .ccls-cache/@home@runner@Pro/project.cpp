@@ -246,8 +246,8 @@ else{
 
 int setupGame(int no,string s1,string s2){
   string choiceBoard[4][8][8];
-  //int scoreArr[4] = {0};
-  
+  int scoreArr[4] = {0};
+  int factor = 2;
   //Goes through each player's turn
   bool answerFound = false;
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
@@ -269,19 +269,24 @@ int setupGame(int no,string s1,string s2){
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
       retry://If the move given by player is wrong they will retry to give their move
       
-      //auto start = high_resolution_clock::now();
+      auto start = high_resolution_clock::now();
       
       cin>>tempPath;
       
-      //auto stop = high_resolution_clock::now();  
+      auto stop = high_resolution_clock::now();  
 
-      //auto duration = duration_cast<microseconds>(stop - start);
+      auto duration = duration_cast<microseconds>(stop - start);
 
-      //float time = duration.count(); 
-
-      //scoreArr[i] += time;
+      int time = (int)duration.count(); 
+      string scoreString = to_string(time);
+      int score = factor*pow(10,(scoreString.length()+1))/time;
+          
+      scoreArr[i] += time;
       
-      // cout<<"\n"<<scoreArr[i]<<endl;
+      cout<<"\n"<<scoreArr[i]<<endl;
+
+      cout<<"\n"<<score<<endl;
+
       //Storing player Score in the array
       
       xCoordinate = getXcoordinate(tempPath,0);
@@ -375,13 +380,6 @@ int main(){
 
   auto end = Clock::now();
   auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-  int score = factor/duration.count()*100000;
-
-  int factor = 2;
-
-  auto duration = duration_cast<microseconds>(stop - start);  
-
   
   CALCULATE THE SCORE IN THE END using array
 
