@@ -211,7 +211,7 @@ bool isPossible(int xCoordinate,int yCoordinate,string path){
   int prevYmove = getYcoordinate(path,path.length()-1); //Gives the last move y axis information
   int prevXmove = getXcoordinate(path,path.length()-2); //Gives the last move x axis information
   
-  if(xCoordinate>0 && xCoordinate<8 && yCoordinate>0 && yCoordinate<8){//Checks validity of X & Y coordinate
+  if(xCoordinate>=0 && xCoordinate<8 && yCoordinate>=0 && yCoordinate<8){//Checks validity of X & Y coordinate
   if((prevXmove+2==xCoordinate) && (prevYmove+1==yCoordinate||prevYmove-1==yCoordinate) || ((prevXmove-1==xCoordinate) && (prevYmove+2==yCoordinate || prevYmove-2==yCoordinate)) || ((prevXmove+1==xCoordinate) && (prevYmove+2==yCoordinate ||prevYmove-2==yCoordinate)) ||((prevXmove-2==xCoordinate) && (prevYmove-1==yCoordinate || prevYmove+1==yCoordinate))){
           return true;
    }
@@ -243,7 +243,7 @@ else{
   }
 }
 
-int setupGame(int no,string s1,string s2){
+string setupGame(int no,string s1,string s2){
   string choiceBoard[4][8][8];
   int scoreArr[4] = {0};
   int factor = 2;
@@ -271,28 +271,27 @@ int setupGame(int no,string s1,string s2){
       auto start = high_resolution_clock::now();
       
       cin>>tempPath;
+     
       
       auto stop = high_resolution_clock::now();  
 
       auto duration = duration_cast<seconds>(stop - start);
 
       int time = (int)duration.count(); 
-      string scoreString = to_string(time);
-      int score = factor*pow(10,(scoreString.length()+1))/time;
+      
+      int score = 100/time;
           
-      //scoreArr[i] += time;
-
       scoreArr[i] += score;
       
       cout<<"\n"<<scoreArr[i]<<endl;
 
-      cout<<"\n"<<score<<endl;
+      //cout<<"\n"<<score<<endl;
 
       //Storing player Score in the array
-      
+
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
-
+      cout<<xCoordinate<<" "<<yCoordinate<<endl;
       
       if(isPossible(xCoordinate,yCoordinate,playerPath[i])){
         playerPath[i].append(tempPath); //Adds the path given by user in the playerPath array
@@ -331,7 +330,8 @@ int setupGame(int no,string s1,string s2){
       move++; //Give another turn
     }
   }
-  return winner; //Stop the game
+  string answer = to_string(winner) + to_string(playerPath[winner].length()/2);
+  return answer; //Stop the game
 }
 string printRandomString(int n){
     char alphabet[3] = { 'f', 'g','h'};
@@ -358,11 +358,15 @@ int main(){
     s1 = "a1";
     cout<<"You Start from: "<<s1<<endl;
     cout<<"Reach "<<s2<<" in minimum moves & be quick!"<<endl;
-    int winner = setupGame(no,s1,s2); //Start the Game
+    string returnedAnswer = setupGame(no,s1,s2); //Start the Game and return the winner
     
-    int steps = solvePath(s1,s2).second;
-  
-    printBoard(s1,steps);
+    char winner = returnedAnswer[0];
+    string steps =  returnedAnswer.substr(1);//return the steps taken by winner
+    int minSteps = solvePath(s1,s2).second;
+    cout<<"PLAYER "<<winner<<" WINS THE GAME WITH "<<steps<<" STEPS"<<endl;
+
+    cout<<"Shortest Path to reach: "<<s2<<"is given below."<<endl;
+    printBoard(s1,minSteps);
     
 }
 
@@ -371,13 +375,23 @@ int main(){
 
 
 /*
-1. Print Score
+1. Score: 
+  auto start = Clock::now();
+  std::cin >> name;
+
+  auto end = Clock::now();
+  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  string scoreString = to_string(time);
+
+
+  if other players dont reach the target arrScore[i] = 0;
+ 
+  //Print Score
   cout<<"Player Name     ||    Score"<<endl;
   for(int i=0;i<4;i++){
     cout<<"PLAYER "<<i<<"\t ||   "scoreArr[i]<<endl;
   }
 
-2. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
-
-3. Some issue with isPossible function
+3. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
+4. Winner is the person with relatively less no of steps
 */
