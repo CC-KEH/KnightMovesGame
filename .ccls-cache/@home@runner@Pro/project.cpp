@@ -268,26 +268,9 @@ string setupGame(int no,string s1,string s2){
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
       retry://If the move given by player is wrong they will retry to give their move
       
-      //auto start = high_resolution_clock::now();
       
       cin>>tempPath;
      
-      
-      //auto stop = high_resolution_clock::now();  
-
-      //auto duration = duration_cast<seconds>(stop - start);
-
-      //int time = (int)duration.count(); 
-      
-      //int score = 100/time;
-          
-      //scoreArr[i] += score;
-      
-      //cout<<"\n"<<scoreArr[i]<<endl;
-
-      //cout<<"\n"<<score<<endl;
-
-      //Storing player Score in the array
 
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
@@ -381,33 +364,38 @@ int main(){
 
 /*
 1. Score: 
-  auto start = Clock::now();
-  std::cin >> name;
+   retry://If the move given by player is wrong they will retry to give their move
+      
+      //auto start = high_resolution_clock::now();
+      
+      cin>>tempPath;
+     
+      
+      //auto stop = high_resolution_clock::now();  
 
-  auto end = Clock::now();
-  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    string scoreString = to_string(time);
+      //auto duration = duration_cast<seconds>(stop - start);
+
+      //int time = (int)duration.count(); 
+      
+      //int score = 100/time;
+          
+      //scoreArr[i] += score;
+      
+      //cout<<"\n"<<scoreArr[i]<<endl;
+
+      //cout<<"\n"<<score<<endl;
+
+      //Storing player Score in the array
+
   CALCULATE THE SCORE IN THE END using array
 
   if other players dont reach the target arrScore[i] = 0;
 
-  //Update array to score
-  for(int i=0;i<4;i++){
-  int temp = scoreArr[i];
-  int score = factor* (int) log10 ((double) temp) + 1/temp;
-  scoreArr[i] = score;
-  }
-
-  
   //Print Score
   cout<<"Player Name     ||    Score"<<endl;
   for(int i=0;i<4;i++){
     cout<<"PLAYER "<<i<<"\t ||   "scoreArr[i]<<endl;
   }
 
-3. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
-4. Winner is the person with relatively less no of steps
+  Try adding KNP algorithm for giving score. Time based score is not working properly
 */
-
-
-//value of time is too much
