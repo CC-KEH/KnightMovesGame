@@ -268,22 +268,22 @@ string setupGame(int no,string s1,string s2){
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
       retry://If the move given by player is wrong they will retry to give their move
       
-      auto start = high_resolution_clock::now();
+      //auto start = high_resolution_clock::now();
       
       cin>>tempPath;
      
       
-      auto stop = high_resolution_clock::now();  
+      //auto stop = high_resolution_clock::now();  
 
-      auto duration = duration_cast<seconds>(stop - start);
+      //auto duration = duration_cast<seconds>(stop - start);
 
-      int time = (int)duration.count(); 
+      //int time = (int)duration.count(); 
       
-      int score = 100/time;
+      //int score = 100/time;
           
-      scoreArr[i] += score;
+      //scoreArr[i] += score;
       
-      cout<<"\n"<<scoreArr[i]<<endl;
+      //cout<<"\n"<<scoreArr[i]<<endl;
 
       //cout<<"\n"<<score<<endl;
 
@@ -291,7 +291,6 @@ string setupGame(int no,string s1,string s2){
 
       xCoordinate = getXcoordinate(tempPath,0);
       yCoordinate = getYcoordinate(tempPath,1);
-      cout<<xCoordinate<<" "<<yCoordinate<<endl;
       
       if(isPossible(xCoordinate,yCoordinate,playerPath[i])){
         playerPath[i].append(tempPath); //Adds the path given by user in the playerPath array
@@ -319,7 +318,13 @@ string setupGame(int no,string s1,string s2){
       
         if(answerFound){
           stopGame = true; //If answer was found Game has to be stopped
-          winner = i;
+          for(int path = 0;path<no;path++){  
+            if(playerPath[i].length()<playerPath[path].length()){
+            winner = i;
+            }else{
+              winner = path;
+            }
+          }
           }
     }
     //print here
@@ -381,11 +386,19 @@ int main(){
 
   auto end = Clock::now();
   auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  string scoreString = to_string(time);
-
+    string scoreString = to_string(time);
+  CALCULATE THE SCORE IN THE END using array
 
   if other players dont reach the target arrScore[i] = 0;
- 
+
+  //Update array to score
+  for(int i=0;i<4;i++){
+  int temp = scoreArr[i];
+  int score = factor* (int) log10 ((double) temp) + 1/temp;
+  scoreArr[i] = score;
+  }
+
+  
   //Print Score
   cout<<"Player Name     ||    Score"<<endl;
   for(int i=0;i<4;i++){
@@ -395,3 +408,6 @@ int main(){
 3. If want to work more, add string matching algorithm to give score even if little bit answer is similar.
 4. Winner is the person with relatively less no of steps
 */
+
+
+//value of time is too much
