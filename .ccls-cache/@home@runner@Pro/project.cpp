@@ -244,9 +244,8 @@ else{
 }
 
 string setupGame(int no,string s1,string s2){
-  string choiceBoard[4][8][8];
-  int scoreArr[4] = {0};
-  int factor = 2;
+  string choiceBoard[2][8][8];
+
   //Goes through each player's turn
   bool answerFound = false;
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
