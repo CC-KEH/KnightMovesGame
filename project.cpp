@@ -362,39 +362,8 @@ int main(){
 
 
 /*
-1. Score: 
-   retry://If the move given by player is wrong they will retry to give their move
-      
-      //auto start = high_resolution_clock::now();
-      
-      cin>>tempPath;
-     
-      
-      //auto stop = high_resolution_clock::now();  
+1. Player should get 100 pts if gets through min path, 
+else decrease pts by 5 for every extra move check this via number of steps taken by 
+program compared to  number of steps taken by player  
 
-      //auto duration = duration_cast<seconds>(stop - start);
-
-      //int time = (int)duration.count(); 
-      
-      //int score = 100/time;
-          
-      //scoreArr[i] += score;
-      
-      //cout<<"\n"<<scoreArr[i]<<endl;
-
-      //cout<<"\n"<<score<<endl;
-
-      //Storing player Score in the array
-
-  CALCULATE THE SCORE IN THE END using array
-
-  if other players dont reach the target arrScore[i] = 0;
-
-  //Print Score
-  cout<<"Player Name     ||    Score"<<endl;
-  for(int i=0;i<4;i++){
-    cout<<"PLAYER "<<i<<"\t ||   "scoreArr[i]<<endl;
-  }
-
-  Try adding KNP algorithm for giving score. Time based score is not working properly
 */
