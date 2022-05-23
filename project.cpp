@@ -175,7 +175,7 @@ void printBoard(string targetPosition,int steps){
     newPath += getcoordinatesFinal(path[i],true);
     newPath += getcoordinatesFinal(path[i+1],false);    
   }
-  cout<<newPath<<endl;
+  cout<<"\nPATH: "<<newPath<<"\n"<<endl;
   
   int step=steps;
   for(int i = path.size()-1;i>=0;i-=2){
@@ -235,7 +235,6 @@ if(playerPath==newPath){
     return true;
 }
 else if(playerPath[playerPath.length()-1] == s2[1] && playerPath[playerPath.length()-2] == s2[0]){
-
     return true;
 } 
 else{
@@ -243,14 +242,25 @@ else{
   }
 }
 
-string setupGame(int no,string s1,string s2){
-  string choiceBoard[2][8][8];
+//This function prints the winner and other data like score, path and number of moves
+string displayResult(int score[],string playerPath[],int winner,int no,string path){
+cout<<"\n\n\tPLAYER "<<winner<<" WINS THE GAME WITH "<<playerPath[winner].length()/2<<" MOVES"<<endl;
+cout<<"\nNAME     ||  SCORE ||  PATH"<<endl;
+for(int i = 0;i<no;i++){
+  score[i] = 100/(playerPath[i].length() - path.length()+1);
+  cout<<"PLAYER "<<i<< " ||  "<<score[i]<< "   ||  " <<playerPath[i]<<endl;
+}
+}
 
+int setupGame(int no,string s1,string s2){
+  string choiceBoard[2][8][8];
+  string path = solvePath(s1,s2).first;
   //Goes through each player's turn
   bool answerFound = false;
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
   int xCoordinate;
   int yCoordinate;
+  int score[2];
   
   int winner;
   
@@ -307,7 +317,7 @@ string setupGame(int no,string s1,string s2){
               winner = path;
             }
           }
-          }
+        }
     }
     //print here
     
@@ -317,9 +327,10 @@ string setupGame(int no,string s1,string s2){
       move++; //Give another turn
     }
   }
-  string answer = to_string(winner) + to_string(playerPath[winner].length()/2);
-  return answer; //Stop the game
+  displayResult(score,playerPath,winner,no,path);
+  return 1;
 }
+
 string printRandomString(int n){
     char alphabet[3] = { 'f', 'g','h'};
  
@@ -345,25 +356,10 @@ int main(){
     s1 = "a1";
     cout<<"You Start from: "<<s1<<endl;
     cout<<"Reach "<<s2<<" in minimum moves & be quick!"<<endl;
-    string returnedAnswer = setupGame(no,s1,s2); //Start the Game and return the winner
-    
-    char winner = returnedAnswer[0];
-    string steps =  returnedAnswer.substr(1);//return the steps taken by winner
+    setupGame(no,s1,s2); //Start the Game and return the winner
     int minSteps = solvePath(s1,s2).second;
-    cout<<"PLAYER "<<winner<<" WINS THE GAME WITH "<<steps<<" STEPS"<<endl;
-
-    cout<<"Shortest Path to reach: "<<s2<<"is given below."<<endl;
+    cout<<"\n\n\tShortest Path to reach "<<s2<<" is given below."<<endl;
     printBoard(s1,minSteps);
     
 }
-
-
-
-
-
-/*
-1. Player should get 100 pts if gets through min path, 
-else decrease pts by 5 for every extra move check this via number of steps taken by 
-program compared to  number of steps taken by player  
-
-*/
+//Not taking input for 2 players, After just removing the score edit from setupGame function
