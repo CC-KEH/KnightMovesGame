@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 #include <chrono>
 #include <cstring>
+#include <unistd.h>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -243,11 +245,22 @@ else{
 }
 
 //This function prints the winner and other data like score, path and number of moves
-string displayResult(int score[],string playerPath[],int winner,int no,string path){
-cout<<"\n\n\tPLAYER "<<winner<<" WINS THE GAME WITH "<<playerPath[winner].length()/2<<" MOVES"<<endl;
+string displayResult(string playerPath[],int winner,int no,string path){
+int score[2];
+
+if(playerPath[0][playerPath[0].length()-1] == playerPath[1][playerPath[1].length()-1]){//If both have same path
+  cout<<"\n\n\tIT'S A TIE!!"<<endl;
+}else{
+cout<<"\n\n\tPLAYER "<<winner<<" WINS THE GAME WITH "<<(playerPath[winner].length()/2)-1<<" MOVES"<<endl;
+}
 cout<<"\nNAME     ||  SCORE ||  PATH"<<endl;
 for(int i = 0;i<no;i++){
-  score[i] = 100/(playerPath[i].length() - path.length()+1);
+  if(playerPath[i].length()==path.length() && playerPath[i][playerPath[i].length()-1] == path[path.length()-1]){//If PLayer took more moves than CPU
+    score[i] = 100;
+  }
+  else{//Player took equal move as CPU
+    score[i] = 100/(playerPath[i].length()+2 - path.length());
+  }
   cout<<"PLAYER "<<i<< " ||  "<<score[i]<< "   ||  " <<playerPath[i]<<endl;
 }
 }
@@ -260,7 +273,6 @@ int setupGame(int no,string s1,string s2){
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
   int xCoordinate;
   int yCoordinate;
-  int score[2];
   
   int winner;
   
@@ -290,16 +302,23 @@ int setupGame(int no,string s1,string s2){
         //here yCoordinate represents Row & xCoordinate represents column
         choiceBoard[i][yCoordinate][xCoordinate] = to_string(move);// update the board with the user move
 
+        cout<<"   _   _   _   _   _   _   _   _ ";
+        cout<<endl;
         for(int row = 7;row>=0;row--){
-          cout<<row+1;
+          cout<<row+1<<"|";
           for(int cell=0;cell<8;cell++){
-          cout<<"  "<<choiceBoard[i][row][cell]<<" ";
+          if(choiceBoard[i][row][cell]==""){
+          cout<<"  "<<choiceBoard[i][row][cell]<<" |";
+          }else{
+          cout<<" "<<choiceBoard[i][row][cell]<<" |";
+          }
         }
         cout<<endl;
+        cout<<"   _   _   _   _   _   _   _   _ ";
         cout<<endl;
       }
         
-      cout<<"   A  B  C  D  E  F  G  H "<<endl;    
+      cout<<"   A   B   C   D   E   F   G   H "<<endl;    
         }
       else{
         cout<<"ILLEGAL MOVE PLAYER "<<i<<endl;
@@ -310,16 +329,16 @@ int setupGame(int no,string s1,string s2){
       
         if(answerFound){
           stopGame = true; //If answer was found Game has to be stopped
-          for(int path = 0;path<no;path++){  
+          /*for(int path = 0;path<no;path++){
             if(playerPath[i].length()<playerPath[path].length()){
             winner = i;
             }else{
               winner = path;
             }
-          }
+          }*/
+          winner = i;
         }
     }
-    //print here
     
     if(stopGame){
       break;
@@ -327,7 +346,8 @@ int setupGame(int no,string s1,string s2){
       move++; //Give another turn
     }
   }
-  displayResult(score,playerPath,winner,no,path);
+  cout<<"In setup Function"<<winner<<endl;
+  displayResult(playerPath,winner,no,path);
   return 1;
 }
 
@@ -343,7 +363,16 @@ string printRandomString(int n){
 }
 
 int main(){
-    //no -> number of players, max 4 allowed!
+    cout<<"\t\t\t\t\t*************************************************************************"<<endl;
+    cout<<"\t\t\t\t\t\t\t\t    Knight Moves"<<endl;
+    cout<<"\t\t\t\t\t*************************************************************************"<<endl;
+    cout<<"\t\t\t\t\t\t\t\tMembers"<<endl;
+    cout<<"\t\t\t\t\t\tArbash Hussain   Vidit Negi   Niharika Singh  Atharva Kumar"<<endl;
+    cout<<"\t\t\t\t\t\t9920103050       9920103059   9920103037      99201030\n\n"<<endl;
+    cout<<"\t\t\t\t\t\t\t\tPress enter to start playing!"<<endl;
+    //getchar();
+    //system("cls");
+    //no -> number of players, max 2 allowed!
     
     int no;
     reset();
@@ -362,4 +391,3 @@ int main(){
     printBoard(s1,minSteps);
     
 }
-//Not taking input for 2 players, After just removing the score edit from setupGame function
