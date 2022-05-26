@@ -110,9 +110,6 @@ pair<string,int> solvePath(string knightPosition, string targetPosition){
     visited[sourceX][sourceY] = 1;
     level[sourceX][sourceY] = 0;
     
-    //Storing the address of 1st block ie source block
-    //addressBoard[sourceX][sourceY].append(to_string(sourceX)+to_string(sourceY));
-  
       while(!q.empty()){
       pair<int,int> v = q.front();
       int x = v.first;
@@ -187,16 +184,19 @@ void printBoard(string targetPosition,int steps){
         board[x][y] = to_string(step);
         step--;
   }
-  
+  cout<<"  --- --- --- --- --- --- --- ---"<<endl;
   for(int row=7; row>=0; row--){
-    cout<<row+1;
+    cout<<row+1<<"|";
     for(int cell=0; cell<8; cell++){
-      cout<<"  "<<board[row][cell]<<" ";
+      if(board[row][cell]==""){
+          cout<<"  "<<board[row][cell]<<" |";
+          }else{
+          cout<<" "<<board[row][cell]<<" |";
+          }
     }
-    cout<<endl;
-    cout<<endl;
+    cout<<endl<<"  --- --- --- --- --- --- --- ---"<<endl;
   }
-  cout<<"   A  B  C  D  E  F  G  H "<<endl;
+  cout<<"   A   B   C   D   E   F   G   H "<<endl;
 }
 
 void setBoard(){
@@ -245,8 +245,9 @@ else{
 }
 
 //This function prints the winner and other data like score, path and number of moves
-string displayResult(string playerPath[],int winner,int no,string path){
+string displayResult(string playerPath[],int winner,int no,string path,string s2){
 int score[2];
+
 
 if(playerPath[0][playerPath[0].length()-1] == playerPath[1][playerPath[1].length()-1]){//If both have same path
   cout<<"\n\n\tIT'S A TIE!!"<<endl;
@@ -255,11 +256,11 @@ cout<<"\n\n\tPLAYER "<<winner<<" WINS THE GAME WITH "<<(playerPath[winner].lengt
 }
 cout<<"\nNAME     ||  SCORE ||  PATH"<<endl;
 for(int i = 0;i<no;i++){
-  if(playerPath[i].length()==path.length() && playerPath[i][playerPath[i].length()-1] == path[path.length()-1]){//If PLayer took more moves than CPU
+  if(playerPath[i].length()==path.length() && playerPath[i][playerPath[i].length()-1] == s2[1]){//If PLayer took more moves than CPU
     score[i] = 100;
   }
   else{//Player took equal move as CPU
-    score[i] = 100/(playerPath[i].length()+2 - path.length());
+    score[i] = 50;
   }
   cout<<"PLAYER "<<i<< " ||  "<<score[i]<< "   ||  " <<playerPath[i]<<endl;
 }
@@ -273,7 +274,12 @@ int setupGame(int no,string s1,string s2){
   bool stopGame = false; //totally depends on answerFound value, exists so that we can stop the game at the right time
   int xCoordinate;
   int yCoordinate;
-  
+  for(int i=0;i<no;i++){//putting D at the place where you have to reach, destination
+    int destY = getXcoordinate(s2,0);
+    int destX = getYcoordinate(s2,1); 
+    choiceBoard[i][destX][destY] = "D";
+  }
+
   int winner;
   
   int move = 1; //Represents which move it iss 
@@ -286,6 +292,22 @@ int setupGame(int no,string s1,string s2){
   string tempPath;//takes temporary input 
   while(!answerFound){
     for(int i=0;i<no;i++){
+      cout<<"  --- --- --- --- --- --- --- --- ";
+        cout<<endl;
+        for(int row = 7;row>=0;row--){
+          cout<<row+1<<"|";
+          for(int cell=0;cell<8;cell++){
+          if(choiceBoard[i][row][cell]==""){
+          cout<<"  "<<choiceBoard[i][row][cell]<<" |";
+          }else{
+          cout<<" "<<choiceBoard[i][row][cell]<<" |";
+          }
+        }
+        cout<<endl;
+        cout<<"  --- --- --- --- --- --- --- --- ";
+        cout<<endl;
+      }
+      cout<<"   A   B   C   D   E   F   G   H "<<endl<<endl;    
       cout<<"Enter your move "<<move<<" Player "<<i<<endl;
       retry://If the move given by player is wrong they will retry to give their move
       
@@ -314,11 +336,11 @@ int setupGame(int no,string s1,string s2){
           }
         }
         cout<<endl;
-        cout<<"   _   _   _   _   _   _   _   _ ";
+        cout<<"  --- --- --- --- --- --- --- --- ";
         cout<<endl;
       }
         
-      cout<<"   A   B   C   D   E   F   G   H "<<endl;    
+      cout<<"   A    B    C    D    E    F    G    H "<<endl;    
         }
       else{
         cout<<"ILLEGAL MOVE PLAYER "<<i<<endl;
@@ -328,14 +350,7 @@ int setupGame(int no,string s1,string s2){
       answerFound = Gameover(playerPath[i],s1,s2);//Checks if answer is found using Gameover function
       
         if(answerFound){
-          stopGame = true; //If answer was found Game has to be stopped
-          /*for(int path = 0;path<no;path++){
-            if(playerPath[i].length()<playerPath[path].length()){
-            winner = i;
-            }else{
-              winner = path;
-            }
-          }*/
+          stopGame = true;
           winner = i;
         }
     }
@@ -346,8 +361,7 @@ int setupGame(int no,string s1,string s2){
       move++; //Give another turn
     }
   }
-  cout<<"In setup Function"<<winner<<endl;
-  displayResult(playerPath,winner,no,path);
+  displayResult(playerPath,winner,no,path,s2);
   return 1;
 }
 
@@ -363,6 +377,15 @@ string printRandomString(int n){
 }
 
 int main(){
+/*cout<<"  __  __ _       _                             _  __      _       _     _     __  __                      "<<endl;
+cout<<" |  \/  (_)     (_)                           | |/ /     (_)     | |   | |   |  \/  |                    "<<endl;
+cout<<" | \  / |_ _ __  _ _ __ ___  _   _ _ __ ___   | ' / _ __  _  __ _| |__ | |_  | \  / | _____   _____  ___ "<<endl;
+cout<<" | |\/| | | '_ \| | '_ ` _ \| | | | '_ ` _ \  |  < | '_ \| |/ _` | '_ \| __| | |\/| |/ _ \ \ / / _ \/ __|"<<endl;
+cout<<" | |  | | | | | | | | | | | | |_| | | | | | | | . \| | | | | (_| | | | | |_  | |  | | (_) \ V /  __/\__ \"<<endl;
+cout<<" |_|  |_|_|_| |_|_|_| |_| |_|\__,_|_| |_| |_| |_|\_\_| |_|_|\__, |_| |_|\__| |_|  |_|\___/ \_/ \___||___/"<<endl;
+cout<<"                                                             __/ |                                       "<<endl;
+cout<<"                                                            |___/             "<<endl;
+    */
     cout<<"\t\t\t\t\t*************************************************************************"<<endl;
     cout<<"\t\t\t\t\t\t\t\t    Knight Moves"<<endl;
     cout<<"\t\t\t\t\t*************************************************************************"<<endl;
@@ -373,7 +396,12 @@ int main(){
     //getchar();
     //system("cls");
     //no -> number of players, max 2 allowed!
-    
+    int mode;
+    cout<<"1. Play"<<endl;
+    cout<<"2. Tutorial"<<endl;
+    cin>>mode;
+    if(mode==1){
+    play:
     int no;
     reset();
     setBoard(); //Set the address on board cells
@@ -389,5 +417,37 @@ int main(){
     int minSteps = solvePath(s1,s2).second;
     cout<<"\n\n\tShortest Path to reach "<<s2<<" is given below."<<endl;
     printBoard(s1,minSteps);
-    
+    }
+    else if(mode == 2){
+       cout<<"You are given a knight that can have 8 possible moves. Each move is two squares in a cardinal direction, then one square in an orthogonal direction."<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"8|   |   |   |   |   |   |   |   |"<<endl;              
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"7|   |   |   |   |   |   |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"6|   |   | 1 |   | 2 |   |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"5|   | 8 |   |   |   | 3 |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;       
+cout<<"4|   |   |   | K |   |   |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"3|   | 7 |   |   |   | 4 |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"2|   |   | 6 |   | 5 |   |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl; 
+cout<<"1|   |   |   |   |   |   |   |   |"<<endl;
+cout<<"  --- --- --- --- --- --- --- --- "<<endl;
+cout<<"  A   B   C   D   E   F   G   H "<<endl;
+       cout<<"You are required to find the minimum path needed for knight to reach the destination."<<endl; 
+       cout<<endl<<"For Example: If Knight is present at A1: only possible moves it can take are B3 or C2"<<endl;
+       cout<<endl<<"\t\tIf Knight is present at D4: then it can take 8 possible moves, B3,B5,C2,C6,E2,E6,F3,F5"<<endl<<endl;
+       cout<<endl<<"You are required to give input in chess language only"<<endl;
+       cout<<endl<<"For Eg: a1,b3 where A represents X-axis and 1 represents Y-axis"<<endl;
+
+       cout<<endl<<"1. Play"<<endl;
+       cin>>mode;
+       if(mode==1){
+         goto play;
+       }
+    }
 }
